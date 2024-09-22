@@ -11,8 +11,6 @@ defmodule BumbBur do
 
     args = Burrito.Util.Args.argv()
 
-    dbg(args)
-
     case args do
       [] ->
         start_server()
@@ -20,7 +18,7 @@ defmodule BumbBur do
       [text] ->
         %{predictions: [prediction | _]} = connect_and_ask(text)
 
-        IO.puts(prediction.label)
+        Owl.IO.puts(prediction.label)
 
         System.halt(0)
     end
@@ -29,7 +27,7 @@ defmodule BumbBur do
   defp start_server do
     case Node.start(:server@localhost, :shortnames) do
       {:ok, _pid} ->
-        dbg("starting server")
+        Owl.IO.puts("[BumbBur] starting server...\n")
 
         children = [
           {Nx.Serving, serving: build_serving(), name: BumbBur.Serving, batch_timeout: 100}
@@ -38,18 +36,19 @@ defmodule BumbBur do
         Supervisor.start_link(children, strategy: :one_for_one)
 
       {:error, {:already_started, _node}} ->
-        dbg("already started")
+        Owl.IO.puts("[BumbBur] error: server already started")
         System.halt(1)
     end
   end
 
   defp connect_and_ask(text) do
-    dbg("connecting and asking")
+    Owl.IO.puts("[BumbBur] connecting to the server...\n")
 
-    with {:ok, _pid} <- Node.start(:client, :shortnames),
+    with {:ok, _pid} <- Node.start(:client@localhost, :shortnames),
          true <- Node.connect(:server@localhost) do
-      result =
-        :erpc.call(:server@localhost, Nx.Serving, :batched_run, [BumbBur.Serving, text])
+      Owl.IO.puts("[BumbBur] asking BumbBur\n")
+
+      :erpc.call(:server@localhost, Nx.Serving, :batched_run, [BumbBur.Serving, text])
     end
   end
 
