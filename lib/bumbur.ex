@@ -5,6 +5,9 @@ defmodule Bumbur do
 
   use Application
 
+  @server_node :server@localhost
+  @client_node :client@localhost
+
   def start(_, _) do
     # Returning `{:ok, pid}` will prevent the application from halting.
     # Use System.halt(exit_code) to terminate the VM when required
@@ -37,7 +40,7 @@ defmodule Bumbur do
   end
 
   defp start_server do
-    case Node.start(:server@localhost, :shortnames) do
+    case Node.start(@server_node, :shortnames) do
       {:ok, _pid} ->
         Owl.IO.puts("[Bumbur] starting server...\n")
 
@@ -60,11 +63,19 @@ defmodule Bumbur do
   defp connect_and_ask(text) do
     Owl.IO.puts("[Bumbur] connecting to the server...\n")
 
-    with {:ok, _pid} <- Node.start(:client@localhost, :shortnames),
-         true <- Node.connect(:server@localhost) do
-      Owl.IO.puts("[Bumbur] asking Bumbur\n")
+    with {:ok, _pid} <- Node.start(@client_node, :shortnames),
+         true <- Node.connect(@server_node) do
+      Owl.IO.puts("[Bumbur] asking Bumbur...\n")
 
-      :erpc.call(:server@localhost, Nx.Serving, :batched_run, [Bumbur.Serving, text])
+      :erpc.call(@server_node, Nx.Serving, :batched_run, [Bumbur.Serving, text])
+    else
+      {:error, _error} ->
+        Owl.IO.puts("[Bumbur] error: could not start node\n")
+        System.halt(1)
+
+      false ->
+        Owl.IO.puts("[Bumbur] error: could not connect to server\n")
+        System.halt(1)
     end
   end
 
