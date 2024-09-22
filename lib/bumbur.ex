@@ -28,12 +28,9 @@ defmodule Bumbur do
         System.halt(0)
 
       _ ->
-        """
-        [Bumbur] error: too many arguments
-        call without arguments to start bumbur
-        call with a single argument to ask bumbur about your text
-        """
-        |> Owl.IO.puts()
+        bumbur_error("too many arguments")
+
+        bumbur_info("call without argument to start server, with single argument to ask bumbur")
 
         System.halt(1)
     end
@@ -42,7 +39,7 @@ defmodule Bumbur do
   defp start_server do
     case Node.start(@server_node, :shortnames) do
       {:ok, _pid} ->
-        Owl.IO.puts("[Bumbur] starting server...\n")
+        bumbur_info("starting server...")
 
         children = [
           {Nx.Serving, serving: build_serving(), name: Bumbur.Serving, batch_timeout: 100}
@@ -51,30 +48,31 @@ defmodule Bumbur do
         Supervisor.start_link(children, strategy: :one_for_one)
 
       {:error, {:already_started, _node}} ->
-        Owl.IO.puts("[Bumbur] error: this node already started")
+        bumbur_error("this node already started")
         System.halt(1)
 
       {:error, _error} ->
-        Owl.IO.puts("[Bumbur] error: server already started")
+        bumbur_error("server already started")
         System.halt(1)
     end
   end
 
   defp connect_and_ask(text) do
-    Owl.IO.puts("[Bumbur] connecting to the server...\n")
+    bumbur_info("connecting to the server...")
 
     with {:ok, _pid} <- Node.start(@client_node, :shortnames),
          true <- Node.connect(@server_node) do
-      Owl.IO.puts("[Bumbur] asking Bumbur...\n")
+      bumbur_info("asking Bumbur...")
 
       :erpc.call(@server_node, Nx.Serving, :batched_run, [Bumbur.Serving, text])
     else
       {:error, _error} ->
-        Owl.IO.puts("[Bumbur] error: could not start node\n")
+        bumbur_error("could not start node")
         System.halt(1)
 
       false ->
-        Owl.IO.puts("[Bumbur] error: could not connect to server\n")
+        bumbur_error("could not connect to server")
+
         System.halt(1)
     end
   end
@@ -96,7 +94,7 @@ defmodule Bumbur do
         SO POSITIVE
         """
         |> String.trim_trailing()
-        |> Owl.Box.new(title: "Positive")
+        |> Owl.Box.new(title: "Positive", padding: 1, horizontal_align: :center)
 
       %{label: "NEG"} ->
         """
@@ -104,7 +102,7 @@ defmodule Bumbur do
         SO NEGATIVE
         """
         |> String.trim_trailing()
-        |> Owl.Box.new(title: "Negative")
+        |> Owl.Box.new(title: "Negative", padding: 1, horizontal_align: :center)
 
       %{label: "NEU"} ->
         """
@@ -112,7 +110,18 @@ defmodule Bumbur do
         SO NEUTRAL
         """
         |> String.trim_trailing()
-        |> Owl.Box.new(title: "Neutral")
+        |> Owl.Box.new(title: "Neutral", padding: 1, horizontal_align: :center)
     end
+  end
+
+  defp bumbur_error(message) do
+    "[Bumbur - ERROR] #{message}\n"
+    |> Owl.Data.tag(:red)
+    |> Owl.IO.puts()
+  end
+
+  defp bumbur_info(message) do
+    "[Bumbur - INFO] #{message}\n"
+    |> Owl.IO.puts()
   end
 end
