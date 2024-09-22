@@ -36,6 +36,10 @@ defmodule BumbBur do
         Supervisor.start_link(children, strategy: :one_for_one)
 
       {:error, {:already_started, _node}} ->
+        Owl.IO.puts("[BumbBur] error: this node already started")
+        System.halt(1)
+
+      {:error, _error} ->
         Owl.IO.puts("[BumbBur] error: server already started")
         System.halt(1)
     end
