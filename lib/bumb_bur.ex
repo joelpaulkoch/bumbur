@@ -16,9 +16,11 @@ defmodule BumbBur do
         start_server()
 
       [text] ->
-        %{predictions: [prediction | _]} = connect_and_ask(text)
+        %{predictions: predictions} = connect_and_ask(text)
 
-        Owl.IO.puts(prediction.label)
+        predictions
+        |> visualize_predictions()
+        |> Owl.IO.puts()
 
         System.halt(0)
     end
@@ -63,5 +65,33 @@ defmodule BumbBur do
     {:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "vinai/bertweet-base"})
 
     Bumblebee.Text.text_classification(bertweet, tokenizer)
+  end
+
+  defp visualize_predictions(predictions) do
+    case hd(predictions) do
+      %{label: "POS"} ->
+        """
+        BUMBUR HAPPY
+        SO POSITIVE
+        """
+        |> String.trim_trailing()
+        |> Owl.Box.new(title: "Positive")
+
+      %{label: "NEG"} ->
+        """
+        BUMBUR SAD
+        SO NEGATIVE
+        """
+        |> String.trim_trailing()
+        |> Owl.Box.new(title: "Negative")
+
+      %{label: "NEU"} ->
+        """
+        BUMBUR SWITZERLAND
+        SO NEUTRAL
+        """
+        |> String.trim_trailing()
+        |> Owl.Box.new(title: "Neutral")
+    end
   end
 end
