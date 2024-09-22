@@ -1,9 +1,9 @@
-defmodule BumbBur.MixProject do
+defmodule Bumbur.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :bumb_bur,
+      app: :bumbur,
       version: "0.1.0",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
@@ -16,7 +16,7 @@ defmodule BumbBur.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {BumbBur, []}
+      mod: {Bumbur, []}
     ]
   end
 
@@ -34,7 +34,7 @@ defmodule BumbBur.MixProject do
 
   def releases do
     [
-      bumb_bur: [
+      bumbur: [
         steps: [:assemble, &Burrito.wrap/1],
         burrito: [
           targets: [

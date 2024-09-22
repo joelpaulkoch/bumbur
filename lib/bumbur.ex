@@ -1,6 +1,6 @@
-defmodule BumbBur do
+defmodule Bumbur do
   @moduledoc """
-  Documentation for `BumbBur`.
+  Documentation for `Bumbur`.
   """
 
   use Application
@@ -29,32 +29,32 @@ defmodule BumbBur do
   defp start_server do
     case Node.start(:server@localhost, :shortnames) do
       {:ok, _pid} ->
-        Owl.IO.puts("[BumbBur] starting server...\n")
+        Owl.IO.puts("[Bumbur] starting server...\n")
 
         children = [
-          {Nx.Serving, serving: build_serving(), name: BumbBur.Serving, batch_timeout: 100}
+          {Nx.Serving, serving: build_serving(), name: Bumbur.Serving, batch_timeout: 100}
         ]
 
         Supervisor.start_link(children, strategy: :one_for_one)
 
       {:error, {:already_started, _node}} ->
-        Owl.IO.puts("[BumbBur] error: this node already started")
+        Owl.IO.puts("[Bumbur] error: this node already started")
         System.halt(1)
 
       {:error, _error} ->
-        Owl.IO.puts("[BumbBur] error: server already started")
+        Owl.IO.puts("[Bumbur] error: server already started")
         System.halt(1)
     end
   end
 
   defp connect_and_ask(text) do
-    Owl.IO.puts("[BumbBur] connecting to the server...\n")
+    Owl.IO.puts("[Bumbur] connecting to the server...\n")
 
     with {:ok, _pid} <- Node.start(:client@localhost, :shortnames),
          true <- Node.connect(:server@localhost) do
-      Owl.IO.puts("[BumbBur] asking BumbBur\n")
+      Owl.IO.puts("[Bumbur] asking Bumbur\n")
 
-      :erpc.call(:server@localhost, Nx.Serving, :batched_run, [BumbBur.Serving, text])
+      :erpc.call(:server@localhost, Nx.Serving, :batched_run, [Bumbur.Serving, text])
     end
   end
 
