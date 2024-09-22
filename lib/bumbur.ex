@@ -23,6 +23,16 @@ defmodule Bumbur do
         |> Owl.IO.puts()
 
         System.halt(0)
+
+      _ ->
+        """
+        [Bumbur] error: too many arguments
+        call without arguments to start bumbur
+        call with a single argument to ask bumbur about your text
+        """
+        |> Owl.IO.puts()
+
+        System.halt(1)
     end
   end
 
