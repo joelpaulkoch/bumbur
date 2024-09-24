@@ -64,7 +64,7 @@ defmodule Bumbur do
          true <- Node.connect(@server_node) do
       bumbur_info("asking Bumbur...")
 
-      :erpc.call(@server_node, Nx.Serving, :batched_run, [Bumbur.Serving, text])
+      Nx.Serving.batched_run({:distributed, Bumbur.Serving}, text)
     else
       {:error, _error} ->
         bumbur_error("could not start node")
