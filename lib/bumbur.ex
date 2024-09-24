@@ -78,39 +78,37 @@ defmodule Bumbur do
   end
 
   def build_serving do
-    {:ok, bertweet} =
-      Bumblebee.load_model({:hf, "finiteautomata/bertweet-base-sentiment-analysis"})
+    {:ok, model} = Bumblebee.load_model({:hf, "facebook/bart-large-mnli", offline: true})
+    {:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "facebook/bart-large-mnli", offline: true})
 
-    {:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "vinai/bertweet-base"})
+    labels = ["something an owl would say", "something a cat would say"]
 
-    Bumblebee.Text.text_classification(bertweet, tokenizer)
+    Bumblebee.Text.zero_shot_classification(model, tokenizer, labels)
   end
 
   defp visualize_predictions(predictions) do
     case hd(predictions) do
-      %{label: "POS"} ->
+      %{label: "something an owl would say"} ->
         """
-        BUMBUR HAPPY
-        SO POSITIVE
+           ,_, 
+          {o,o}
+          /)  )
+        ---"-"--
         """
         |> String.trim_trailing()
-        |> Owl.Box.new(title: "Positive", padding: 1, horizontal_align: :center)
+        |> Owl.Box.new(title: "Owl", padding: 1, horizontal_align: :center)
 
-      %{label: "NEG"} ->
+      %{label: "something a cat would say"} ->
         """
-        BUMBUR SAD
-        SO NEGATIVE
+         /_/\\ 
+        ( o.o )
+         > ^ <
         """
         |> String.trim_trailing()
-        |> Owl.Box.new(title: "Negative", padding: 1, horizontal_align: :center)
+        |> Owl.Box.new(title: "Cat", padding: 1, horizontal_align: :center)
 
-      %{label: "NEU"} ->
-        """
-        BUMBUR SWITZERLAND
-        SO NEUTRAL
-        """
-        |> String.trim_trailing()
-        |> Owl.Box.new(title: "Neutral", padding: 1, horizontal_align: :center)
+      _ ->
+        Owl.Data.tag("unknown prediction", :red)
     end
   end
 
