@@ -1,6 +1,7 @@
 # Bumbur
 
-A small cli application combining Bumblebee and Burrito.
+A small cli application combining Bumblebee and Burrito.  
+Epmd must be running to start it (`epmd -daemon`).
 
 ## How to use
 
