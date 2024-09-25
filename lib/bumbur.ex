@@ -78,8 +78,8 @@ defmodule Bumbur do
   end
 
   def build_serving do
-    {:ok, model} = Bumblebee.load_model({:hf, "facebook/bart-large-mnli", offline: true})
-    {:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "facebook/bart-large-mnli", offline: true})
+    {:ok, model} = Bumblebee.load_model({:hf, "facebook/bart-large-mnli"})
+    {:ok, tokenizer} = Bumblebee.load_tokenizer({:hf, "facebook/bart-large-mnli"})
 
     labels = ["something an owl would say", "something a cat would say"]
 
