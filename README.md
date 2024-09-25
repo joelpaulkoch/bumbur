@@ -1,21 +1,17 @@
 # Bumbur
 
-**TODO: Add description**
+A small cli application combining Bumblebee and Burrito.
 
-## Installation
+## How to use
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `bumbur` to your list of dependencies in `mix.exs`:
+Run `mix deps.get` to get the dependencies.
+Run `mix run --no-halt -- start` to start the server, this will download the models from huggingface the first time you run it.
+Run `mix run -- ask "meow"` to ask the server if an owl or a cat is more likely to say "meow".
 
-```elixir
-def deps do
-  [
-    {:bumbur, "~> 0.1.0"}
-  ]
-end
-```
+## Build a standalone executable
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/bumbur>.
+Run `MIX_ENV=prod mix release` to build a standalone executable using [burrito](https://hexdocs.pm/burrito/readme.html).
 
+Current targets (configured in `mix.exs`):
+  - macos: [os: :darwin, cpu: :aarch64]
+  - linux: [os: :linux, cpu: :x86_64] (there is a linker issue, so this executable might not work for you)
