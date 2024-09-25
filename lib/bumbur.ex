@@ -15,10 +15,10 @@ defmodule Bumbur do
     args = Burrito.Util.Args.argv()
 
     case args do
-      [] ->
+      ["start"] ->
         start_server()
 
-      [text] ->
+      ["ask", text] ->
         %{predictions: predictions} = connect_and_ask(text)
 
         predictions
@@ -28,9 +28,7 @@ defmodule Bumbur do
         System.halt(0)
 
       _ ->
-        bumbur_error("too many arguments")
-
-        bumbur_info("call without argument to start server, with single argument to ask bumbur")
+        help_text()
 
         System.halt(1)
     end
@@ -120,6 +118,23 @@ defmodule Bumbur do
 
   defp bumbur_info(message) do
     "[Bumbur - INFO] #{message}\n"
+    |> Owl.IO.puts()
+  end
+
+  defp help_text() do
+    """
+    A small cli application combining Bumblebee and Burrito.
+    Start Bumbur, then ask Bumbur if the text is something an owl would say or rather something a cat would say.
+
+    Example:
+      bumbur start
+      ...
+      bumbur ask "meow"
+
+    Usage: 
+      bumbur start - starts the server
+      bumbur ask <TEXT> - find out who is more likely to say <TEXT>, an owl or a cat.
+    """
     |> Owl.IO.puts()
   end
 end
