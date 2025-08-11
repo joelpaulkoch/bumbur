@@ -31,10 +31,9 @@ defmodule Bumbur.MixProject do
     [
       {:burrito, "~> 1.0"},
       {:owl, "~> 0.11"},
-      {:bumblebee, "~> 0.5.0"},
-      {:nx, "~> 0.7.0"},
-      {:exla, "~> 0.7.0"},
-      {:axon, "~> 0.6.1"}
+      {:bumblebee, "~> 0.6.0"},
+      {:nx, "~> 0.9.2"},
+      {:exla, "~> 0.9.2"}
     ]
   end
 
