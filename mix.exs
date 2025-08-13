@@ -12,12 +12,6 @@ defmodule Bumbur.MixProject do
     ]
   end
 
-  def cli do
-    [
-      preferred_envs: [release: :prod]
-    ]
-  end
-
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
